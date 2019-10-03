@@ -1,0 +1,8 @@
+.ipynb_checkpoints/
+.vscode/
+env/
+blog/
+data-science-from-scratch/
+__pycache__/
+mnist_dataset/mnist_test.csv
+mnist_dataset/mnist_train.csv
