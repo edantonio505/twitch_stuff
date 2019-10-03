@@ -2,11 +2,11 @@ import math
 import tqdm
 import random
 from typing import List
-import numpy as np
 
 
-
+# ======================
 # Linear Algebra
+# ======================
 
 Vector = List[float]
 
@@ -52,13 +52,9 @@ def scalar_multiply(c: float, v: Vector) -> Vector:
 
 
 
-
-
-# Gradient
-
-
-
-
+# ======================
+# Calculo
+# ======================
 # sum of squares 
 def sum_of_squares(v: Vector) -> float:
     """Computes the sum of squared elements in v"""
@@ -68,6 +64,8 @@ def sum_of_squares(v: Vector) -> float:
 
 
 
+# Loss function
+# returns error distance
 def squared_distance(v: Vector, w: Vector) -> float:
     """Computes (v_1 - w_1) ** 2 + ... + (v_n - w_n) ** 2"""
     return sum_of_squares(subtract(v, w))
@@ -76,8 +74,11 @@ def squared_distance(v: Vector, w: Vector) -> float:
 
 
 
+
+
 # Gradient step downwards
 # Gradient Descent
+# performs a gradient step
 def gradient_step(v: Vector, gradient: Vector, step_size: float) -> Vector:
     """Moves `step_size` in the `gradient` direction from `v`"""
     assert len(v) == len(gradient)
@@ -109,32 +110,16 @@ def sigmoid(t: float) -> float:
     return 1 / (1 + math.exp(-t))
 
 
-
-
-
-
-
 # Neuron ouput
 def neuron_output(weights: Vector, inputs: Vector) -> float:
     # weights includes the bias term, inputs includes a 1
-
-    # print(weights, inputs)
     output = sigmoid(dot(weights, inputs))
-
-
     return output
 
 
 
 
-
-
-
-
-
-
 # feed forward algorithm
-
 def feed_forward(neural_network: List[List[Vector]],
                  input_vector: Vector) -> List[Vector]:
     """
@@ -163,7 +148,10 @@ def feed_forward(neural_network: List[List[Vector]],
 
 
 
-# Squared Error gradient
+
+# Calculo + Feed_forward
+# Finds the Gradient
+# Calculus
 def sqerror_gradients(network: List[List[Vector]],
                       input_vector: Vector,
                       target_vector: Vector) -> List[List[Vector]]:
@@ -209,46 +197,13 @@ def sqerror_gradients(network: List[List[Vector]],
 
 
 
-
-
+# Regresa con el inde del valor mas grande dentro del Vector
+# el index representa el numero predicho
 def argmax(xs: list) -> int:
     """Returns the index of the largest value"""
     return max(range(len(xs)), key=lambda i: xs[i])
 
 
-
-
-
-
-
-
-def binary_encode(x: int) -> Vector:
-    binary: List[float] = []
-
-    for i in range(10):
-        binary.append(x % 2)
-        x = x // 2
-
-    return binary
-
-
-
-
-
-
-
-
-
-
-def fizz_buzz_encode(x: int) -> Vector:
-    if x % 15 == 0:
-        return [0, 0, 0, 1]
-    elif x % 5 == 0:
-        return [0, 0, 1, 0]
-    elif x % 3 == 0:
-        return [0, 1, 0, 0]
-    else:
-        return [1, 0, 0, 0]
 
 
 
@@ -308,10 +263,13 @@ def display_number(vector, label):
 
 
 
+
+
+
+
+
 def main():
     random.seed(0)
-
-
     # open file 
     data_file = open('mnist_dataset/mnist_train_100.csv', 'r')
     data_list = data_file.readlines()
@@ -328,7 +286,11 @@ def main():
     index_number = 7
     display_number(X_train[index_number], y_train[index_number])
 
-  
+    
+
+
+    # HyperParameters
+    # ================
     hidden_nodes = 100
     input_nodes = 784
     output_nodes = 10
@@ -337,6 +299,8 @@ def main():
 
 
 
+
+    # Weights and network inicialization
     # create a layers 
     # matrices of weights for both the input 
     # and the hidden to output
@@ -355,6 +319,8 @@ def main():
     
     
     
+    # Neural Network 
+    # Training
     with tqdm.trange(epochs) as t:
         for epoch in t:
             epoch_loss = 0.0
@@ -362,7 +328,7 @@ def main():
             for x, y in zip(X_train, y_train):
 
                 # backpropagate
-                # not really important right now
+                # to measure loss function
                 predicted = feed_forward(network, x)[-1]
                 epoch_loss += squared_distance(predicted, y)
                 # ======================================
@@ -370,10 +336,13 @@ def main():
                 # backpropagation algorithm
                 # output = sigmoid(W.X+b)
                 # feed forward + gradient calculation 
+                
+                # calculate gradients
                 gradients = sqerror_gradients(network, x, y)
     
                 # Take a gradient step for each neuron in each layer
                 # update the network by learning rate
+                # gradient descent and updating weights of the algorithm
                 network = [[  gradient_step(neuron, grad, -learning_rate)
                             for neuron, grad in zip(layer, layer_grad)]
                         for layer, layer_grad in zip(network, gradients)]
@@ -389,7 +358,7 @@ def main():
 
 
 
-    # Testear
+    # Testeo de Red Neuronal
     # testing fiels
     # open file 
     data_file = open('mnist_dataset/mnist_test_10.csv', 'r')
